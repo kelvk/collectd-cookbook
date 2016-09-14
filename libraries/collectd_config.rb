@@ -49,6 +49,8 @@ module CollectdCookbook
       # @return [String]
       def write_elements(directives, indent = 0)
         tabs = ("\t" * indent)
+        space = ' '
+        quote = '"'
         directives.dup.map do |key, value|
           next if value.nil?
           key = snake_to_camel(key)
@@ -63,7 +65,8 @@ module CollectdCookbook
           elsif value.kind_of?(Hash) # rubocop:disable Style/ClassCheck
             id = value.delete('id')
             next if id.nil?
-            [%(#{tabs}<#{key} "#{id}">),
+            space = '' && quote = '' if id.empty?
+            [%(#{tabs}<#{key}#{space}#{quote}#{id}#{quote}>),
              write_elements(value, indent.next),
              %(#{tabs}</#{key}>)
             ].join("\n")
